@@ -4,9 +4,12 @@ from watchlist.api.serializers import WatchListSerializer, StreamSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from watchlist.api.permissions import IsAdminToPost
 
 
 class WatchListAV(APIView):
+    permission_classes = [IsAdminToPost]
     def get(self, request):
         movies = WatchList.objects.all()
         serializer = WatchListSerializer(movies, many=True)
@@ -20,6 +23,7 @@ class WatchListAV(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class WatchDetailAV(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, pk):
         try:
             movie = WatchList.objects.get(id=pk)
