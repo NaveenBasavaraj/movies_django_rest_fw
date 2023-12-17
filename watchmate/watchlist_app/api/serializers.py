@@ -1,12 +1,26 @@
 from rest_framework import serializers
 from watchlist_app.models import Movie
 
+# using model serializers
+class MovieSerializer(serializers.ModelSerializer):
+    # add custom serializer fields here before meta and include in meta
+    len_names = serializers.SerializerMethodField()
+    class Meta:
+        model = Movie
+        fields = "__all__"
+        # fields = ['id', 'name', 'description']
+        # exclude = ['active']
+    
+    def get_len_names(self, object):
+        return len(object.name)
+        
 # field level validation using validators
 def desc_length(value):
     if len(value) <= 2:
         raise serializers.ValidationError("Description too short!!")
 
-class MovieSerializer(serializers.Serializer):
+class MovieSerializer_removepostfix(serializers.Serializer): 
+    # remove _removepostfix to make this active
     id = serializers.IntegerField(read_only=True)
     name = serializers.CharField()
     description = serializers.CharField(validators=[desc_length])
